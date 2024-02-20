@@ -372,7 +372,7 @@ function FlowChat() { // flowchat button
     setMessages((prevMessages) => [...prevMessages, newMessage]);
     setInputValue('');
 
-    const messages = generateMessage(isWord, newMessage.industry, newMessage.content);                    // 프롬프트
+    const messages = generateMessage(isWord, newMessage.industry, newMessage.content);                    // 프롬프트 생성
 
     console.log("== Post GPT API ==");
     console.log('보낸 메세지', messages);
@@ -407,11 +407,11 @@ function FlowChat() { // flowchat button
   function generateMessage(word, industry, content) {
     let message;
 
-    if (word === '단어') {
-      message = [
+    if (word === '단어') {                  // 용어 검색 프롬프트
+      message =  [
         {
           "role": "system",
-          "content": "안녕하세요. 해석이 어려운 문장이나 용어를 입력하시면, 저희 챗봇이 알기 쉽게 풀어서 설명드립니다. 단어를 입력하실 경우 단어를 풀어서 설명드립니다. 특정 산업군에 관련된 용어나 문장을 입력하시면 더 정확한 답변을 드릴 수 있습니다. 시작해주세요!"
+          "content": `안녕하세요. 해석이 어려운 문장이나 용어를 입력하시면, 저희 챗봇이 알기 쉽게 풀어서 설명드립니다. 단어를 입력하실 경우 단어를 풀어서 설명드립니다. ${industry} 산업군에 관련된 용어나 문장을 입력하시면 더 정확한 답변을 드릴 수 있습니다. 시작해주세요!`
         },
         {
           "role": "user",
@@ -422,7 +422,7 @@ function FlowChat() { // flowchat button
           "content": "여기에 사용자가 입력할 내용에 대한 예상 반응을 적어주세요. 예를 들어, '블록체인'이라는 단어에 대한 최대 1~2줄의 짧고 간결한 설명(블록체인: 블록체인은 분산 데이터 저장 기술로, 각 블록에 데이터를 기록하고 체인처럼 연결하여 데이터의 안전성과 무결성을 보장합니다. 주로 금융, 계약 등 다양한 분야에서 활용됩니다.)을 제공합니다."
         }
       ];
-    } else {
+    } else {                                // 문장 변환 프롬프트
       switch (industry) {
         case "소프트웨어":
           message = [
@@ -508,15 +508,15 @@ function FlowChat() { // flowchat button
           message = [
             {
               "role": "system",
-              "content": "안녕하세요. 여기서는 특정 직군의 전문적인 단어로 구성된 문장을 입력받으면, 그 문장 내의 어려운 단어들을 더 일반적이고 알아보기 쉬운 단어로 변환하여 제공합니다. 직접적인 설명 없이 단어 변환만을 수행합니다. 변환을 원하는 문장을 입력해주세요."
+              "content": `안녕하세요. 여기서는 사용자가 특정 산업군과 관련된 전문적인 단어로 구성된 문장을 입력하면, 그 문장 내의 어려운 단어들을 ${industry} 산업군에 맞는 더 일반적이고 알아보기 쉬운 단어로 변환하여 제공합니다. 직접적인 설명 없이 단어 변환만을 수행합니다. 변환을 원하는 산업군과 문장을 입력해주세요.`
             },
             {
               "role": "user",
-              "content": `${content}`
+              "content": `산업군: ${industry}, 문장: ${content}`
             },
             {
               "role": "system",
-              "content": "여기에는 사용자가 입력한 전문적인 문장을 받아, 그 안의 전문 용어를 일반적인 용어로 변환한 문장을 출력합니다. 예시: 사용자가 '저희가 현재 PoC 중이라 부탁 못들어줘요'라고 입력했을 때, 시스템은 '저희가 현재 새 프로젝트가 실현 가능성이 있는지 검증하는 중이라 부탁 못들어줘요'라고 응답합니다."
+              "content": `여기에는 사용자가 입력한 ${industry} 산업군에 맞추어 전문적인 문장을 받아, 그 안의 전문 용어를 ${industry} 산업군에 맞는 일반적인 용어로 변환한 문장을 출력합니다. 예를 들어, 산업군이 '건설'일 때 사용자가 '우리 회사는 이번 프로젝트의 tender 과정에 참여하고 있습니다.'라고 입력했을 때, 시스템은 '우리 회사는 이번 프로젝트의 입찰 과정에 참여하고 있습니다.'라고 응답합니다.`
             }
           ];
       }
